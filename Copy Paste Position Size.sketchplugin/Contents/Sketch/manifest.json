@@ -1,0 +1,87 @@
+{
+    "name" : "Copy Paste WHXY",
+    "identifier" : "com.sketchapp.copypastewhxy",
+    "version" : "1.0",
+    "description" : "Copy and paste width, height, x & y values to objects",
+    "authorEmail" : "mail@andrejilderda.nl",
+    "author" : "Andre Jilderda",
+    "commands" : [
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onCopy",
+        "shortcut" : "ctrl shift c",
+        "name" : "Copy",
+        "identifier" : "onCopy"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteSize",
+        "shortcut" : "ctrl shift v",
+        "name" : "Paste Size",
+        "identifier" : "onPasteSize"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteWidth",
+        "shortcut" : "ctrl shift w",
+        "name" : "Paste Width",
+        "identifier" : "onPasteWidth"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteHeight",
+        "shortcut" : "ctrl shift h",
+        "name" : "Paste Height",
+        "identifier" : "onPasteHeight"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteWidthPorportionally",
+        "shortcut" : "ctrl shift alt w",
+        "name" : "Paste Width Porportionally",
+        "identifier" : "onPasteWidthPorportionally"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteHeightPorportionally",
+        "shortcut" : "ctrl shift alt h",
+        "name" : "Paste Height Porportionally",
+        "identifier" : "onPasteHeightPorportionally"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPastePosition",
+        "shortcut" : "ctrl shift p",
+        "name" : "Paste Position",
+        "identifier" : "onPastePosition"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteX",
+        "shortcut" : "ctrl shift x",
+        "name" : "Paste X",
+        "identifier" : "onPasteX"
+      },
+      {
+        "script" : "copy-paste-whxy.js",
+        "handler" : "onPasteY",
+        "shortcut" : "ctrl shift y",
+        "name" : "Paste Y",
+        "identifier" : "onPasteY"
+      }
+    ],
+    "menu": {
+      "items": [
+        "onCopy",
+        "onPasteSize",
+        "onPasteWidth",
+        "onPasteHeight",
+        "onPasteSizePorportionally",
+        "onPasteWidthPorportionally",
+        "onPasteHeightPorportionally",
+        "onPastePosition",
+        "onPasteX",
+        "onPasteY"
+      ]
+    }
+}
