@@ -26,7 +26,7 @@ Multiple layer support for copying (will store the selection bounds) as well as 
 \**Paste proportionally will respect the selected layer's aspect ratio.
 
 ## Installation
- 1. [Download](Copy Paste Position Size.sketchplugin) the plugin.
+ 1. [Download](https://github.com/ANGIstudio/Copy-Paste-Position-Size/archive/master.zip) the plugin.
  2. Run ‘Copy Paste Position Size.sketchplugin’ to install
 
 ## Thanks to:
