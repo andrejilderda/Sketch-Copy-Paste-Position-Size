@@ -29,8 +29,11 @@ Multiple layer support for copying (will store the selection bounds) as well as 
  1. [Download](https://github.com/ANGIstudio/Copy-Paste-Position-Size/archive/master.zip) the plugin.
  2. Run ‘Copy Paste Position Size.sketchplugin’ to install
 
-## Thanks to:
+## Thanks to
 This plugin is inspired by John Dunning's [Copy Paste WHXY](http://johndunning.com/fireworks/about/CopyPasteWHXY), a Fireworks plugin I've used for a long time!
 
 ## Feedback
 If you find any issues or have any suggestions, please create an issue. Pull requests are welcome also!
+
+## Created by
+[Andre Jilderda](https://github.com/ajilderda) @ [Angi Studio](http://www.angistudio.com), The Hague (NL)

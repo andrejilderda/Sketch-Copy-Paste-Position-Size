@@ -80,6 +80,14 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		var newX = Math.round(persist.get("copiedX"));
 		var newY = Math.round(persist.get("copiedY"));
 		
+		// If layer is a textlayer, set width to fixed
+		if (proportional || w || h) { // only trigger this statement when resizing
+			if (layer instanceof MSTextLayer) {
+				layer.setTextBehaviour(1);
+			}
+		}
+		
+		// Set width / height 
 		if(proportional) {
 			var oldWidth = frame.width();
 			var oldHeight = frame.height();
@@ -99,6 +107,8 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 			if(w) {	frame.setWidth( newWidth ); }
 			if(h) {	frame.setHeight( newHeight ); }
 		}
+		
+		// Set position
 		// if(x) {	frame.setX( persist.get("copiedX") ); } //not relative to artboard but to group
 		// if(y) {	frame.setY( persist.get("copiedY") ); }
 		if(x) {	layer.absoluteRect().setRulerX( newX ); }
@@ -106,10 +116,6 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		// doc.showMessage(persist.get("copiedY"));
 		doc.reloadInspector();
 	}
-}
-
-function get(value) {
-
 }
 
 //////////////////////////////////////
