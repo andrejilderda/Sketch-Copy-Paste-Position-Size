@@ -22,19 +22,19 @@ function onCopy(context) {
 		copiedX = Math.round(layer.absoluteRect().rulerX());
 		copiedY = Math.round(layer.absoluteRect().rulerY());
 
-		persist.set("copiedWidth", copiedWidth)
-		persist.set("copiedHeight", copiedHeight)
-		persist.set("copiedX", copiedX)
-		persist.set("copiedY", copiedY)
+		rcSetSettingForKey("copiedWidth", copiedWidth)
+		rcSetSettingForKey("copiedHeight", copiedHeight)
+		rcSetSettingForKey("copiedX", copiedX)
+		rcSetSettingForKey("copiedY", copiedY)
 		doc.showMessage("Copied: Width: " + copiedWidth + " Height: " + copiedHeight + " X: " + copiedX + " Y: " + copiedY);
 	} else { 
 		// // The code below with .groupBoundsForLayers(selection) works, but not when having multiple objects in different groups selected.
 		// // https://github.com/turbobabr/Sketch-Plugins-Cookbook#finding-bounds-for-a-set-of-layers
 		// var bounds=MSLayerGroup.groupBoundsForLayers(selection);
-		// persist.set("copiedWidth", bounds.size.width) // This doesn't work when having multiple objects selected in multiple groups
-		// persist.set("copiedHeight", bounds.size.height)
-		// persist.set("copiedX", bounds.origin.x)
-		// persist.set("copiedY", bounds.origin.y)
+		// rcSetSettingForKey("copiedWidth", bounds.size.width) // This doesn't work when having multiple objects selected in multiple groups
+		// rcSetSettingForKey("copiedHeight", bounds.size.height)
+		// rcSetSettingForKey("copiedX", bounds.origin.x)
+		// rcSetSettingForKey("copiedY", bounds.origin.y)
 		// doc.showMessage("Copied X: " + bounds.origin.x + " Y: " + bounds.origin.y + " Width: " + bounds.size.width + " Height: " + bounds.size.height);
 		
 		// // Therefore I wrote this fugly workaround which could probably be written way more efficient. For now gets the job done but feel free to refactor.
@@ -57,15 +57,25 @@ function onCopy(context) {
 		selectionBoundL = Math.round(selectionBoundL);
 		selectionBoundT = Math.round(selectionBoundT);
 
-		persist.set("copiedWidth", selectionWidth);
-		persist.set("copiedHeight", selectionHeight);
-		persist.set("copiedX", selectionBoundL);
-		persist.set("copiedY", selectionBoundT);
+		rcSetSettingForKey("copiedWidth", selectionWidth);
+		rcSetSettingForKey("copiedHeight", selectionHeight);
+		rcSetSettingForKey("copiedX", selectionBoundL);
+		rcSetSettingForKey("copiedY", selectionBoundT);
 
 		doc.showMessage("Copied: Width: " + selectionWidth + " Height: " + selectionHeight + " X: " + selectionBoundL + " Y: " + selectionBoundT);
 		// log("selectionBoundT: " + selectionBoundT + "  selectionBoundR: " + selectionBoundR + "  selectionBoundB: " + selectionBoundB + "  selectionBoundL: " + selectionBoundL + "  selectionWidth: " + selectionWidth + "  selectionHeight: " + selectionHeight);
 	}
 	// log("values copied");
+}
+
+// A nicer/shorter way for saving settings than using persistence.js: http://developer.sketchapp.com/reference/api/file/api/Application.js.html
+// It seems like they are not part of the Sketch API yet, as long as that's not
+// the case I use 'rc' as a prefix to prevent conflicts in the future
+function rcSetSettingForKey(key, value) {
+    NSUserDefaults.standardUserDefaults().setObject_forKey_(value, key)
+}
+function rcSettingForKey(key) {
+    return NSUserDefaults.standardUserDefaults().objectForKey_(key);
 }
 
 function pasteWHXY(context,w,h,x,y,proportional) {
@@ -75,10 +85,10 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		var layer = selection.objectAtIndex(i);
 		var frame = layer.frame();
 
-		var newWidth = Math.round(persist.get("copiedWidth"));
-		var newHeight = Math.round(persist.get("copiedHeight"));
-		var newX = Math.round(persist.get("copiedX"));
-		var newY = Math.round(persist.get("copiedY"));
+		var newWidth = Math.round(rcSettingForKey("copiedWidth"));
+		var newHeight = Math.round(rcSettingForKey("copiedHeight"));
+		var newX = Math.round(rcSettingForKey("copiedX"));
+		var newY = Math.round(rcSettingForKey("copiedY"));
 		
 		// If layer is a textlayer, set width to fixed
 		if (proportional || w || h) { // only trigger this statement when resizing
@@ -87,7 +97,7 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 			}
 		}
 		
-		// Set width / height 
+		// Set width / height
 		if(proportional) {
 			var oldWidth = frame.width();
 			var oldHeight = frame.height();
@@ -109,11 +119,11 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		}
 		
 		// Set position
-		// if(x) {	frame.setX( persist.get("copiedX") ); } //not relative to artboard but to group
-		// if(y) {	frame.setY( persist.get("copiedY") ); }
+		// if(x) {	frame.setX( rcSettingForKey("copiedX") ); } //not relative to artboard but to group
+		// if(y) {	frame.setY( rcSettingForKey("copiedY") ); }
 		if(x) {	layer.absoluteRect().setRulerX( newX ); }
 		if(y) {	layer.absoluteRect().setRulerY( newY ); }
-		// doc.showMessage(persist.get("copiedY"));
+		// doc.showMessage(rcSettingForKey("copiedY"));
 		doc.reloadInspector();
 	}
 }
