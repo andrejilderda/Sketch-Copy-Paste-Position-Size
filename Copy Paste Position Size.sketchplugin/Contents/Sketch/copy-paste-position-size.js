@@ -1,3 +1,6 @@
+var Group = require('sketch/dom').Group
+var Text = require('sketch/dom').Text
+
 @import "persistence.js";
 
 var selectionBoundT = 10000;
@@ -78,11 +81,11 @@ function rcSettingForKey(key) {
     return NSUserDefaults.standardUserDefaults().objectForKey_(key);
 }
 
+
 function pasteWHXY(context,w,h,x,y,proportional) {
 	var doc = context.document;
 	var selection = context.selection;
-	for (var i=0; i < selection.count(); i++) {
-		var layer = selection.objectAtIndex(i);
+	selection.forEach( layer => {
 		var frame = layer.frame();
 
 		var newWidth = Math.round(rcSettingForKey("copiedWidth"));
@@ -90,41 +93,72 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		var newX = Math.round(rcSettingForKey("copiedX"));
 		var newY = Math.round(rcSettingForKey("copiedY"));
 		
-		// If layer is a textlayer, set width to fixed
-		if (proportional || w || h) { // only trigger this statement when resizing
-			if (layer instanceof MSTextLayer) {
-				layer.setTextBehaviour(1);
-			}
-		}
+    
+		// unfortunately we must run this function twice to get the layer frame updated properly.
+		// once before and once after the layer was resized.
+		if ( proportional || w || h ) fitTextFrame( layer );
 		
 		// Set width / height
-		if(proportional) {
+		if( proportional ) {
 			var oldWidth = frame.width();
 			var oldHeight = frame.height();
 
-			if(w) {
+			if (w) {
 				var proportion = newWidth / oldWidth;
 				frame.setWidth(newWidth);
 				frame.setHeight(oldHeight * proportion);
 			}
-			if(h) {
+			if (h) {
 				var proportion = newHeight / oldHeight;
 				frame.setHeight(newHeight);
 				frame.setWidth(oldWidth * proportion);
 			}
 		}
 		else {
-			if(w) {	frame.setWidth( newWidth ); }
-			if(h) {	frame.setHeight( newHeight ); }
+			if (w) frame.setWidth( newWidth );
+			if (h) frame.setHeight( newHeight );
 		}
+		
+		// * cough * here we run the fitTextFrame function again
+		if ( proportional || w || h ) fitTextFrame( layer );
 		
 		// Set position
 		// if(x) {	frame.setX( rcSettingForKey("copiedX") ); } //not relative to artboard but to group
 		// if(y) {	frame.setY( rcSettingForKey("copiedY") ); }
-		if(x) {	layer.absoluteRect().setRulerX( newX ); }
-		if(y) {	layer.absoluteRect().setRulerY( newY ); }
+		if (x) layer.absoluteRect().setRulerX( newX );
+		if (y) layer.absoluteRect().setRulerY( newY );
 		// doc.showMessage(rcSettingForKey("copiedY"));
+		
 		doc.reloadInspector();
+	})
+}
+
+// below 2 functions were partly borrowed from https://github.com/juliussohn/sketch-textbox-fit-content
+// attempt to fix the textbox height after resizing. There are however issues with (text)layers with the 
+// 'Fix height' property set and there doesn't seem to be a way to set this value programmatically
+function fitTextFrame( layer ) {
+	if ( layer instanceof MSTextLayer ) {
+		// convert to wrapped API object, since some methods are only available in the Sketch API
+		layer = Text.fromNative( layer );
+		
+		// layer.sketchObject.setFixed_forEdge_(false, 16); // disable 'Fix height' layer property
+		layer.fixedWidth = true;
+		
+		// adjust the layer frame height based on the text lines
+		var lineCount = layer.fragments.length;
+		var baseHeight = layer.fragments[lineCount - 1].rect.y + layer.fragments[lineCount - 1].rect.height;
+		layer.frame.height = baseHeight;
+	} 
+	else if ( layer instanceof MSLayerGroup ) {
+		// adjust group frame to fit children
+		layer.resizeToFitChildrenWithOption(0)
+		
+		var group = Group.fromNative(layer);
+		var groupLayers = group.layers;
+		groupLayers.forEach( layer => {
+			fitTextFrame( layer.sketchObject );
+		});
+		group.adjustToFit();
 	}
 }
 
