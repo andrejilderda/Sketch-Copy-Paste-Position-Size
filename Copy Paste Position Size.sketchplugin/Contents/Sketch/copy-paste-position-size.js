@@ -18,19 +18,19 @@ function onCopy(context) {
 	if (selection.count() == 1) {
 		var layer = selection.objectAtIndex(0);
 		var frame = layer.frame();
-		// log(layer.absoluteRect().rulerX()); //relative to canvas
+		// log(layer.absoluteRect().x()); //relative to canvas
 		// log(frame.x()); //relative to group
 		copiedWidth = Math.round(frame.width());
 		copiedHeight = Math.round(frame.height());
-		copiedX = Math.round(layer.absoluteRect().rulerX());
-		copiedY = Math.round(layer.absoluteRect().rulerY());
+		copiedX = Math.round(layer.absoluteRect().x());
+		copiedY = Math.round(layer.absoluteRect().y());
 
 		rcSetSettingForKey("copiedWidth", copiedWidth)
 		rcSetSettingForKey("copiedHeight", copiedHeight)
 		rcSetSettingForKey("copiedX", copiedX)
 		rcSetSettingForKey("copiedY", copiedY)
 		doc.showMessage("Copied: Width: " + copiedWidth + " Height: " + copiedHeight + " X: " + copiedX + " Y: " + copiedY);
-	} else { 
+	} else {
 		// // The code below with .groupBoundsForLayers(selection) works, but not when having multiple objects in different groups selected.
 		// // https://github.com/turbobabr/Sketch-Plugins-Cookbook#finding-bounds-for-a-set-of-layers
 		// var bounds=MSLayerGroup.groupBoundsForLayers(selection);
@@ -39,14 +39,14 @@ function onCopy(context) {
 		// rcSetSettingForKey("copiedX", bounds.origin.x)
 		// rcSetSettingForKey("copiedY", bounds.origin.y)
 		// doc.showMessage("Copied X: " + bounds.origin.x + " Y: " + bounds.origin.y + " Width: " + bounds.size.width + " Height: " + bounds.size.height);
-		
+
 		// // Therefore I wrote this fugly workaround which could probably be written way more efficient. For now gets the job done but feel free to refactor.
 		for (var i=0; i < selection.count(); i++) {
 			var layer = selection.objectAtIndex(i);
 			var frame = layer.frame();
 
-			var objBoundT = layer.absoluteRect().rulerY();
-			var objBoundL = layer.absoluteRect().rulerX();
+			var objBoundT = layer.absoluteRect().y();
+			var objBoundL = layer.absoluteRect().x();
 			var objBoundR = frame.width() + objBoundL;
 			var objBoundB = frame.height() + objBoundT;
 
@@ -92,12 +92,12 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 		var newHeight = Math.round(rcSettingForKey("copiedHeight"));
 		var newX = Math.round(rcSettingForKey("copiedX"));
 		var newY = Math.round(rcSettingForKey("copiedY"));
-		
-    
+
+
 		// unfortunately we must run this function twice to get the layer frame updated properly.
 		// once before and once after the layer was resized.
 		if ( proportional || w || h ) fitTextFrame( layer );
-		
+
 		// Set width / height
 		if( proportional ) {
 			var oldWidth = frame.width();
@@ -118,41 +118,41 @@ function pasteWHXY(context,w,h,x,y,proportional) {
 			if (w) frame.setWidth( newWidth );
 			if (h) frame.setHeight( newHeight );
 		}
-		
+
 		// * cough * here we run the fitTextFrame function again
 		if ( proportional || w || h ) fitTextFrame( layer );
-		
+
 		// Set position
 		// if(x) {	frame.setX( rcSettingForKey("copiedX") ); } //not relative to artboard but to group
 		// if(y) {	frame.setY( rcSettingForKey("copiedY") ); }
-		if (x) layer.absoluteRect().setRulerX( newX );
-		if (y) layer.absoluteRect().setRulerY( newY );
+		if (x) layer.absoluteRect().setX( newX );
+		if (y) layer.absoluteRect().setY( newY );
 		// doc.showMessage(rcSettingForKey("copiedY"));
-		
+
 		doc.reloadInspector();
 	})
 }
 
 // below 2 functions were partly borrowed from https://github.com/juliussohn/sketch-textbox-fit-content
-// attempt to fix the textbox height after resizing. There are however issues with (text)layers with the 
+// attempt to fix the textbox height after resizing. There are however issues with (text)layers with the
 // 'Fix height' property set and there doesn't seem to be a way to set this value programmatically
 function fitTextFrame( layer ) {
 	if ( layer instanceof MSTextLayer ) {
 		// convert to wrapped API object, since some methods are only available in the Sketch API
 		layer = Text.fromNative( layer );
-		
+
 		// layer.sketchObject.setFixed_forEdge_(false, 16); // disable 'Fix height' layer property
 		layer.fixedWidth = true;
-		
+
 		// adjust the layer frame height based on the text lines
 		var lineCount = layer.fragments.length;
 		var baseHeight = layer.fragments[lineCount - 1].rect.y + layer.fragments[lineCount - 1].rect.height;
 		layer.frame.height = baseHeight;
-	} 
+	}
 	else if ( layer instanceof MSLayerGroup ) {
 		// adjust group frame to fit children
 		layer.resizeToFitChildrenWithOption(0)
-		
+
 		var group = Group.fromNative(layer);
 		var groupLayers = group.layers;
 		groupLayers.forEach( layer => {
