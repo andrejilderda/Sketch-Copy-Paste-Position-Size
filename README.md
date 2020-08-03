@@ -36,4 +36,4 @@ This plugin is inspired by John Dunning's [Copy Paste WHXY](http://johndunning.c
 If you find any issues or have any suggestions, please create an issue. Pull requests are welcome also!
 
 ## Created by
-[Andre Jilderda](https://github.com/ajilderda) @ [Angi Studio](http://www.angistudio.com), The Hague (NL)
+[Andre Jilderda](https://github.com/ajilderda)
