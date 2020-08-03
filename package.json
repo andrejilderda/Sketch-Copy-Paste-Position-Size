@@ -1,7 +1,7 @@
 {
   "name": "sketch-copy-paste-position-size",
   "description" : "Easily copy and paste width, height, x & y values from and to objects",
-  "version": "1.3",
+  "version": "1.3.0",
   "engines": {
     "sketch": ">=49.0"
   },

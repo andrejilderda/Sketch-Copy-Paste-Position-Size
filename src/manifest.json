@@ -3,7 +3,7 @@
   "icon": "icon.png",
   "name" : "Copy Paste Position Size",
   "identifier" : "com.sketchapp.copypastepositionsize",
-  "version" : "1.3",
+  "version" : "1.3.0",
   "description" : "Easily copy and paste width, height, x & y values from and to objects",
   "authorEmail" : "mail@andrejilderda.nl",
   "author" : "Andre Jilderda",
