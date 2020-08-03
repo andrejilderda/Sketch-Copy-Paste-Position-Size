@@ -4,6 +4,10 @@ const document = require('sketch/dom').getSelectedDocument();
 const Settings = require('sketch/settings');
 const UI = require('sketch/ui');
 
+const pixelFit = (input) => {
+  return Settings.globalSettingForKey("tryToFitToPixelBounds") ? Math.round(input) : input;
+}
+
 export function onCopy() {
 	const selection = document.selectedLayers;
 	if (!selection.length) return UI.message('Please select at least one layer to copy from.');
@@ -12,17 +16,17 @@ export function onCopy() {
 		const layer = selection.layers[0];
 		const frame = layer.frame;
 
-		const copiedWidth = Math.round(frame.width);
-		const copiedHeight = Math.round(frame.height);
-		const copiedX = Math.round(frame.x);
-		const copiedY = Math.round(frame.y);
+		const copiedWidth = pixelFit(frame.width);
+		const copiedHeight = pixelFit(frame.height);
+		const copiedX = pixelFit(frame.x);
+		const copiedY = pixelFit(frame.y);
 
 		Settings.setSettingForKey("copiedWidth", copiedWidth);
 		Settings.setSettingForKey("copiedHeight", copiedHeight);
 		Settings.setSettingForKey("copiedX", copiedX);
-		Settings.setSettingForKey("copiedY", copiedY);
+    Settings.setSettingForKey("copiedY", copiedY);
 
-		UI.message(`📋 Width: ${copiedWidth} Height: ${copiedHeight} X: ${copiedX} Y: ${copiedY}`);
+    UI.message(`📋 Width: ${pixelFit(copiedWidth)} Height: ${pixelFit(copiedHeight)} X: ${pixelFit(copiedX)} Y: ${pixelFit(copiedY)}`);
 	} else {
 		const { layers } = selection;
 
@@ -30,15 +34,15 @@ export function onCopy() {
 		const selectionBoundT = Math.min(...layers.map(layer => layer.frame.y));
 		const selectionBoundR = Math.max(...layers.map(layer => layer.frame.x + layer.frame.width));
 		const selectionBoundB = Math.max(...layers.map(layer => layer.frame.y + layer.frame.height));
-		const selectionWidth = Math.round(selectionBoundR - selectionBoundL);
-		const selectionHeight = Math.round(selectionBoundB - selectionBoundT);
+		const selectionWidth = pixelFit(selectionBoundR - selectionBoundL);
+		const selectionHeight = pixelFit(selectionBoundB - selectionBoundT);
 
 		Settings.setSettingForKey("copiedWidth", selectionWidth);
 		Settings.setSettingForKey("copiedHeight", selectionHeight);
-		Settings.setSettingForKey("copiedX", Math.round(selectionBoundL));
-		Settings.setSettingForKey("copiedY", Math.round(selectionBoundT));
+		Settings.setSettingForKey("copiedX", pixelFit(selectionBoundL));
+		Settings.setSettingForKey("copiedY", pixelFit(selectionBoundT));
 
-		UI.message(`📋 Width: ${selectionWidth} Height: ${selectionHeight} X: ${Math.round(selectionBoundL)} Y: ${Math.round(selectionBoundT)}`);
+		UI.message(`📋 Width: ${pixelFit(selectionWidth)} Height: ${pixelFit(selectionHeight)} X: ${pixelFit(selectionBoundL)} Y: ${pixelFit(selectionBoundT)}`);
 	}
 }
 
@@ -48,10 +52,10 @@ export function pasteWHXY(w,h,x,y,proportional) {
 	selectedLayers.forEach( layer => {
 		const { frame } = layer;
 
-		const newWidth = Math.round(Settings.settingForKey('copiedWidth'));
-		const newHeight = Math.round(Settings.settingForKey('copiedHeight'));
-		const newX = Math.round(Settings.settingForKey('copiedX'));
-		const newY = Math.round(Settings.settingForKey('copiedY'));
+		const newWidth = pixelFit(Settings.settingForKey('copiedWidth'));
+		const newHeight = pixelFit(Settings.settingForKey('copiedHeight'));
+		const newX = pixelFit(Settings.settingForKey('copiedX'));
+		const newY = pixelFit(Settings.settingForKey('copiedY'));
 
 		// we must run this function twice to get the layer frame updated properly.
 		// once before and once after the layer was resized.
