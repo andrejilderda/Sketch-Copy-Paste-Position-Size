@@ -2,6 +2,9 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <item>
+      <enclosure url="https://github.com/ajilderda/Sketch-Copy-Paste-Position-Size/releases/download/v1.6.1/sketch-copy-paste-position-size.sketchplugin.zip" sparkle:version="1.6.1"/>
+    </item>
+    <item>
       <enclosure url="https://github.com/ajilderda/Sketch-Copy-Paste-Position-Size/releases/download/v1.6.0/sketch-copy-paste-position-size.sketchplugin.zip" sparkle:version="1.6.0"/>
     </item>
     <item>
