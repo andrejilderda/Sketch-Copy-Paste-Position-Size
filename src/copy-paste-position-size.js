@@ -8,13 +8,18 @@ const pixelFit = (input) => {
   return Settings.globalSettingForKey("tryToFitToPixelBounds") ? Math.round(input) : input;
 }
 
+const getRelativeCoordinates = layer => layer.frame.changeBasis({
+	from: layer.parent,
+	to: layer.getParentArtboard()
+});
+
 export function onCopy() {
 	const selection = document.selectedLayers;
 	if (!selection.length) return UI.message('Please select at least one layer to copy from.');
 
 	if (selection.length === 1) {
 		const layer = selection.layers[0];
-		const frame = layer.frame;
+		const frame = getRelativeCoordinates(layer);
 
 		const copiedWidth = pixelFit(frame.width);
 		const copiedHeight = pixelFit(frame.height);
@@ -24,16 +29,29 @@ export function onCopy() {
 		Settings.setSettingForKey("copiedWidth", copiedWidth);
 		Settings.setSettingForKey("copiedHeight", copiedHeight);
 		Settings.setSettingForKey("copiedX", copiedX);
-    Settings.setSettingForKey("copiedY", copiedY);
+	    Settings.setSettingForKey("copiedY", copiedY);
 
-    UI.message(`📋 Width: ${pixelFit(copiedWidth)} Height: ${pixelFit(copiedHeight)} X: ${pixelFit(copiedX)} Y: ${pixelFit(copiedY)}`);
+    	UI.message(`📋 Width: ${pixelFit(copiedWidth)} Height: ${pixelFit(copiedHeight)} X: ${pixelFit(copiedX)} Y: ${pixelFit(copiedY)}`);
 	} else {
 		const { layers } = selection;
 
-		const selectionBoundL = Math.min(...layers.map(layer => layer.frame.x));
-		const selectionBoundT = Math.min(...layers.map(layer => layer.frame.y));
-		const selectionBoundR = Math.max(...layers.map(layer => layer.frame.x + layer.frame.width));
-		const selectionBoundB = Math.max(...layers.map(layer => layer.frame.y + layer.frame.height));
+		const selectionBounds = layers.reduce((acc, layer) => {
+			const coordinates = getRelativeCoordinates(layer);
+			const selectionBoundR = coordinates.x + coordinates.width;
+			const selectionBoundB = coordinates.y + coordinates.height;
+
+			return {
+				l: [...acc.l, coordinates.x],
+				t: [...acc.t, coordinates.y],
+				r: [...acc.r, selectionBoundR],
+				b: [...acc.b, selectionBoundB],
+			}
+		}, { l: [], t: [], r: [], b: [] });
+
+		const selectionBoundL = Math.min(...selectionBounds.l);
+		const selectionBoundT = Math.min(...selectionBounds.t);
+		const selectionBoundR = Math.max(...selectionBounds.r);
+		const selectionBoundB = Math.max(...selectionBounds.b);
 		const selectionWidth = pixelFit(selectionBoundR - selectionBoundL);
 		const selectionHeight = pixelFit(selectionBoundB - selectionBoundT);
 
